@@ -1,4 +1,4 @@
-package se.umu.cs._5dv147.a1.dv15lgr;
+package se.umu.cs._5dv186.a1.dv15lgr;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;

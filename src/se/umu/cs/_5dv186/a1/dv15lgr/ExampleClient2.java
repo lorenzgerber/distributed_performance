@@ -1,4 +1,4 @@
-package se.umu.cs._5dv147.a1.dv15lgr;
+package se.umu.cs._5dv186.a1.dv15lgr;
 
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public final class ExampleClient2
           long t2 = System.currentTimeMillis();
           System.out.println("block received from server in " + (t2 - t1) + " ms");
           for(int j = 0; j < 16*16; j++) {
-        	  System.out.print(block.getPixels()[j].getB());
+        	  //System.out.print(block.getPixels()[j].getB());
           }
           count++;
         }
