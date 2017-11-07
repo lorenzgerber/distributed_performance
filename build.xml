@@ -33,19 +33,13 @@
       <compilerarg value="-Xlint:unchecked"/>
       <classpath refid="classpath.lib"/>
     </javac>
-
-    <!-- delete test classes -->
-<!--
-    <delete>
-      <fileset dir="${build}" includes="**/*$Test.class"/>
-    </delete>
--->
   </target>
 
   <target name="dist" depends="compile" description="generate distribution" >
     <jar jarfile="${jarfile}" basedir="${build}">
       <manifest>
         <attribute name="Main-Class" value="${mainclass}"/>
+      	<attribute name="Class-Path" value="lib/5dv186a1.jar"/>
       </manifest>
     </jar>
 
