@@ -12,11 +12,20 @@
 
   <!-- classpath -->
   <path id="classpath.lib">
-    <pathelement location="lib/5dv186a1.jar"/>
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
     </fileset>
   </path>
+
+	<pathconvert property="mf.classpath" pathsep=" ">
+	    <path refid="classpath.lib"/>
+	    <mapper>
+	        <chainedmapper>
+	            <flattenmapper/>
+	            <globmapper from="*.jar" to="lib/*.jar"/>
+	        </chainedmapper>
+	    </mapper>
+	</pathconvert>
 
   <target name="init">
     <!-- create time stamp -->
@@ -34,12 +43,14 @@
       <classpath refid="classpath.lib"/>
     </javac>
   </target>
+	
+	
 
   <target name="dist" depends="compile" description="generate distribution" >
     <jar jarfile="${jarfile}" basedir="${build}">
       <manifest>
         <attribute name="Main-Class" value="${mainclass}"/>
-      	<attribute name="Class-Path" value="lib/5dv186a1.jar"/>
+      	<attribute name="Class-Path" value="${mf.classpath}"/>
       </manifest>
     </jar>
 
