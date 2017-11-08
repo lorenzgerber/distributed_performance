@@ -52,11 +52,5 @@ public interface IFrameAccessor {
 
   //----------------------------------------------------------
   //----------------------------------------------------------
-  public interface Factory {
-    //----------------------------------------------------------
-    public IFrameAccessor getFrameAccessor (StreamServiceClient client, String stream);
 
-    //----------------------------------------------------------
-    public IFrameAccessor getFrameAccessor (StreamServiceClient[] clients, String stream);
-  }
 }
