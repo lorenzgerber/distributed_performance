@@ -8,7 +8,7 @@
   <property name="src" location="src"/>
   <property name="build" location="build"/>
   <property name="jarfile" location="test.jar"/>
-  <property name="mainclass" value="se.umu.cs._5dv186.a1.dv15lgr.ExampleClient2"/>
+  <property name="mainclass" value="se.umu.cs._5dv186.a1.dv15lgr.SerialClient"/>
 
   <!-- classpath -->
   <path id="classpath.lib">

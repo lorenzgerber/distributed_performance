@@ -4,12 +4,12 @@ import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.DefaultStreamServiceClient;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
 
-public class SerialClient {
+public final class SerialClient {
 	
-	public SerialClient() {
+	public static void main(String args[]) {
 		
 		final String host = "harry.cs.umu.se";
-		final int timeout = 1000;
+		final int timeout = 250;
 		final String username = "dv15lgr";
 		final String stream = "stream1";
 		
@@ -25,6 +25,7 @@ public class SerialClient {
 		
 		for (int i = 0; i < numberOfFrames; i++) {
 			
+			System.out.println("We are here " + i);
 			frameAccessor.getFrame(i);
 						
 		}

@@ -76,8 +76,15 @@ public class FrameAccessor implements IFrameAccessor {
 		int width = currentStream.getWidthInBlocks();
 		int height = currentStream.getHeightInBlocks();
 		for(int i = 0; i < width; i++) {
-			for (int j = 0; i < height; i++) {
-				Block block = serviceClient.getBlock(currentStream.getName(), frame,10,10);
+			for (int j = 0; j < height; j++) {
+				try {
+					System.out.println("requesting frame " + i + " " + j);
+					Block block = serviceClient.getBlock(currentStream.getName(), frame,i,j);
+				} catch (SocketTimeoutException e) {
+					System.out.println("socket timeout");
+					j--;
+				}
+				
 			}
 		}
 		
