@@ -13,16 +13,23 @@ public class SerialClient {
 		final String username = "dv15lgr";
 		final String stream = "stream1";
 		
-		try {
-		
+		try{
 		StreamServiceClient client = DefaultStreamServiceClient.bind(host,timeout,username);
 
 		Factory factory = new Factory();
 		FrameAccessor frameAccessor = factory.getFrameAccessor(client, stream);
 		
+		//  used to determine how many times to iterate
+		StreamInfo test = frameAccessor.getStreamInfo();
+		int numberOfFrames = test.getLengthInFrames();
+		
+		for (int i = 0; i < numberOfFrames; i++) {
+			
+			frameAccessor.getFrame(i);
+						
+		}
 		
 		
-			StreamInfo test = frameAccessor.getStreamInfo();
 		} catch (Exception e) {
 			e.printStackTrace();		
 		}

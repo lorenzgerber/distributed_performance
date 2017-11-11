@@ -3,24 +3,39 @@ package se.umu.cs._5dv186.a1.dv15lgr;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
+import ki.types.ds.Block;
 import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
 
 public class FrameAccessor implements IFrameAccessor {
 	
+	private StreamServiceClient serviceClient;
+	private StreamInfo currentStream;
 	private SerialPerformanceStatistics performanceStatistics;
-
 	
-	public FrameAccessor() {
+	public FrameAccessor(StreamServiceClient client, StreamInfo stream) {
 		performanceStatistics = new SerialPerformanceStatistics();
-		
+		serviceClient = client;
+		currentStream = stream;
 		
 	}
 	
-	
-	
+	public class SerialFrame implements Frame{
+		
+		Block[][] blocks;
+		
+		public SerialFrame(int frame) {
+			
+		}
 
-	
+		@Override
+		public Block getBlock(int blockX, int blockY) throws IOException, SocketTimeoutException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
+		
 	public class SerialPerformanceStatistics implements PerformanceStatistics{
 
 		@Override
@@ -51,14 +66,23 @@ public class FrameAccessor implements IFrameAccessor {
 
 	@Override
 	public StreamInfo getStreamInfo() throws IOException, SocketTimeoutException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return currentStream;
 	}
 
 	@Override
 	public Frame getFrame(int frame) throws IOException, SocketTimeoutException {
-		// TODO Auto-generated method stub
-		return null;
+		Frame currentFrame = new SerialFrame(frame);	
+		int width = currentStream.getWidthInBlocks();
+		int height = currentStream.getHeightInBlocks();
+		for(int i = 0; i < width; i++) {
+			for (int j = 0; i < height; i++) {
+				Block block = serviceClient.getBlock(currentStream.getName(), frame,10,10);
+			}
+		}
+		
+		
+		return currentFrame;
 	}
 
 	@Override
