@@ -1,10 +1,28 @@
 package se.umu.cs._5dv186.a1.dv15lgr;
 
+import java.io.IOException;
+
 import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.DefaultStreamServiceClient;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
 
+
+
+
+
+
 public final class SerialClient {
+	
+	
+	  public static void listStreamInfo (StreamServiceClient client) throws IOException {
+		  StreamInfo[] streams = client.listStreams();
+		  System.out.println("found " + streams.length + " streams");
+		  for (StreamInfo stream : streams){
+			  System.out.println("  '" + stream.getName() + "': " + stream.getLengthInFrames() + " frames, " + 
+					  stream.getWidthInBlocks() + " x " + stream.getHeightInBlocks() + " blocks");
+		  }
+	  }
+	
 	
 	public static void main(String args[]) {
 		
@@ -15,6 +33,8 @@ public final class SerialClient {
 		
 		try{
 		StreamServiceClient client = DefaultStreamServiceClient.bind(host,timeout,username);
+		
+		listStreamInfo(client);
 
 		Factory factory = new Factory();
 		FrameAccessor frameAccessor = factory.getFrameAccessor(client, stream);
