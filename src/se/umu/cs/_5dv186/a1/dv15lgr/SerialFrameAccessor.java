@@ -10,18 +10,18 @@ import ki.types.ds.Block;
 import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
 
-public class FrameAccessor implements IFrameAccessor {
+public class SerialFrameAccessor implements IFrameAccessor {
 	
 	private StreamServiceClient serviceClient;
 	private StreamInfo currentStream;
-	private SerialPerformanceStatistics performanceStatistics;
+	private PerformanceStatistics performanceStatistics;
 	
 	private double dropRate;
 	private double blockCount;
 	private double blockDropped;
 	ArrayList<Long> latency = new ArrayList<>();
 	
-	public FrameAccessor(StreamServiceClient client, StreamInfo stream) {
+	public SerialFrameAccessor(StreamServiceClient client, StreamInfo stream) {
 		serviceClient = client;
 		currentStream = stream;
 		
@@ -29,7 +29,7 @@ public class FrameAccessor implements IFrameAccessor {
 	
 	@Override
 	public PerformanceStatistics getPerformanceStatistics() {
-		SerialPerformanceStatistics stats = new SerialPerformanceStatistics(serviceClient.getHost(), blockCount, blockCount, blockCount, latency);
+		PerformanceStatistics stats = new PerformanceStatistics(serviceClient.getHost(), blockCount, blockCount, blockCount, latency);
 		
 		return stats;
 	}
@@ -40,11 +40,11 @@ public class FrameAccessor implements IFrameAccessor {
 		return currentStream;
 	}
 	
-	public class SerialFrame implements Frame{
+	public class Frame implements IFrame{
 		
 		Block[][] blocks;
 		
-		public SerialFrame(int frame) {
+		public Frame(int frame) {
 			
 		}
 
@@ -56,7 +56,7 @@ public class FrameAccessor implements IFrameAccessor {
 		
 	}
 		
-	public class SerialPerformanceStatistics implements PerformanceStatistics{
+	public class PerformanceStatistics implements IPerformanceStatistics{
 		
 		double dropRate;
 		double blockCount;
@@ -64,7 +64,7 @@ public class FrameAccessor implements IFrameAccessor {
 		ArrayList<Long> latency;
 		String hostName;
 		
-		public SerialPerformanceStatistics(String currentHost, double currentDropRate, double currentBlockCount, double currentBlockDropped, ArrayList<Long> currentLatency) {
+		public PerformanceStatistics(String currentHost, double currentDropRate, double currentBlockCount, double currentBlockDropped, ArrayList<Long> currentLatency) {
 			hostName = currentHost;
 			dropRate = currentDropRate;
 			blockCount = currentBlockCount;
@@ -103,7 +103,7 @@ public class FrameAccessor implements IFrameAccessor {
 
 	@Override
 	public Frame getFrame(int frame) throws IOException, SocketTimeoutException {
-		Frame currentFrame = new SerialFrame(frame);	
+		Frame currentFrame = new Frame(frame);	
 		int width = currentStream.getWidthInBlocks();
 		int height = currentStream.getHeightInBlocks();
 		System.out.println("Frame: " + frame);

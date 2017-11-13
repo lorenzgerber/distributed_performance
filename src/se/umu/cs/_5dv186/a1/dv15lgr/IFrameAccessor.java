@@ -11,16 +11,16 @@ public interface IFrameAccessor {
     throws IOException, SocketTimeoutException;
 
   //----------------------------------------------------------
-  public Frame getFrame (int frame)
+  public IFrame getFrame (int frame)
     throws IOException, SocketTimeoutException;
 
   //----------------------------------------------------------
-  public PerformanceStatistics getPerformanceStatistics ();
+  public IPerformanceStatistics getPerformanceStatistics ();
 
 
   //----------------------------------------------------------
   //----------------------------------------------------------
-  public interface Frame {
+  public interface IFrame {
     //----------------------------------------------------------
     public Block getBlock (int blockX, int blockY)
       throws IOException, SocketTimeoutException;
@@ -29,7 +29,7 @@ public interface IFrameAccessor {
 
   //----------------------------------------------------------
   //----------------------------------------------------------
-  public interface PerformanceStatistics {
+  public interface IPerformanceStatistics {
     
     //----------------------------------------------------------
     // returns packet drop rate in percent (%) (or -1 for unused hosts)

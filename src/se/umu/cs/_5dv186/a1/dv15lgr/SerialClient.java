@@ -5,7 +5,7 @@ import java.io.IOException;
 import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.DefaultStreamServiceClient;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
-import se.umu.cs._5dv186.a1.dv15lgr.IFrameAccessor.PerformanceStatistics;
+import se.umu.cs._5dv186.a1.dv15lgr.SerialFrameAccessor.PerformanceStatistics;
 
 
 
@@ -40,7 +40,7 @@ public final class SerialClient {
 		listStreamInfo(client);
 
 		Factory factory = new Factory();
-		FrameAccessor frameAccessor = factory.getFrameAccessor(client, stream);
+		SerialFrameAccessor frameAccessor = factory.getFrameAccessor(client, stream);
 		
 		//  used to determine how many times to iterate
 		StreamInfo test = frameAccessor.getStreamInfo();

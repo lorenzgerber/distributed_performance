@@ -5,8 +5,8 @@ import se.umu.cs._5dv186.a1.client.StreamServiceClient;
 public interface IFactory {
 
 
-		public FrameAccessor getFrameAccessor(StreamServiceClient client, String stream);
+		public SerialFrameAccessor getFrameAccessor(StreamServiceClient client, String stream);
 
-		public FrameAccessor getFrameAccessor(StreamServiceClient[] clients, String stream); 
+		public ParallelFrameAccessor getFrameAccessor(StreamServiceClient[] clients, String stream); 
 
 }
