@@ -3,6 +3,8 @@ package se.umu.cs._5dv186.a1.dv15lgr;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.OptionalDouble;
+import java.util.OptionalLong;
 
 import ki.types.ds.Block;
 import ki.types.ds.StreamInfo;
@@ -14,16 +16,28 @@ public class FrameAccessor implements IFrameAccessor {
 	private StreamInfo currentStream;
 	private SerialPerformanceStatistics performanceStatistics;
 	
-	private int dropRate;
-	private int blockCount;
-	private int blockDropped;
+	private double dropRate;
+	private double blockCount;
+	private double blockDropped;
 	ArrayList<Long> latency = new ArrayList<>();
 	
 	public FrameAccessor(StreamServiceClient client, StreamInfo stream) {
-		performanceStatistics = new SerialPerformanceStatistics();
 		serviceClient = client;
 		currentStream = stream;
 		
+	}
+	
+	@Override
+	public PerformanceStatistics getPerformanceStatistics() {
+		SerialPerformanceStatistics stats = new SerialPerformanceStatistics(serviceClient.getHost(), blockCount, blockCount, blockCount, latency);
+		
+		return stats;
+	}
+	
+	@Override
+	public StreamInfo getStreamInfo() throws IOException, SocketTimeoutException {
+		
+		return currentStream;
 	}
 	
 	public class SerialFrame implements Frame{
@@ -43,17 +57,32 @@ public class FrameAccessor implements IFrameAccessor {
 	}
 		
 	public class SerialPerformanceStatistics implements PerformanceStatistics{
-
+		
+		double dropRate;
+		double blockCount;
+		double blockDropped;
+		ArrayList<Long> latency;
+		String hostName;
+		
+		public SerialPerformanceStatistics(String currentHost, double currentDropRate, double currentBlockCount, double currentBlockDropped, ArrayList<Long> currentLatency) {
+			hostName = currentHost;
+			dropRate = currentDropRate;
+			blockCount = currentBlockCount;
+			blockDropped = currentBlockDropped;
+			latency = currentLatency;
+			
+		}
+		
 		@Override
 		public double getPacketDropRate(String host) {
-			// TODO Auto-generated method stub
-			return 0;
+			
+			return blockCount/blockDropped;
 		}
 
 		@Override
 		public double getPacketLatency(String host) {
-			// TODO Auto-generated method stub
-			return 0;
+			OptionalDouble average = latency.stream().mapToLong(a -> a).average();
+			return average.isPresent() ? average.getAsDouble() : 0; 
 		}
 
 		@Override
@@ -70,11 +99,7 @@ public class FrameAccessor implements IFrameAccessor {
 		
 	}
 
-	@Override
-	public StreamInfo getStreamInfo() throws IOException, SocketTimeoutException {
-		
-		return currentStream;
-	}
+
 
 	@Override
 	public Frame getFrame(int frame) throws IOException, SocketTimeoutException {
@@ -84,8 +109,8 @@ public class FrameAccessor implements IFrameAccessor {
 		for(int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				try {
-					System.out.println("requesting frame " + i + " " + j);
-					long t1 = System.currentTimeMillis()
+					System.out.println("requesting frame " + frame + " block " + i + " " + j);
+					long t1 = System.currentTimeMillis();
 					Block block = serviceClient.getBlock(currentStream.getName(), frame,i,j);
 					long t2 = System.currentTimeMillis();
 					latency.add(t2-t1);
@@ -104,10 +129,6 @@ public class FrameAccessor implements IFrameAccessor {
 		return currentFrame;
 	}
 
-	@Override
-	public PerformanceStatistics getPerformanceStatistics() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 }
