@@ -2,6 +2,7 @@ package se.umu.cs._5dv186.a1.dv15lgr;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 
 import ki.types.ds.Block;
 import ki.types.ds.StreamInfo;
@@ -12,6 +13,11 @@ public class FrameAccessor implements IFrameAccessor {
 	private StreamServiceClient serviceClient;
 	private StreamInfo currentStream;
 	private SerialPerformanceStatistics performanceStatistics;
+	
+	private int dropRate;
+	private int blockCount;
+	private int blockDropped;
+	ArrayList<Long> latency = new ArrayList<>();
 	
 	public FrameAccessor(StreamServiceClient client, StreamInfo stream) {
 		performanceStatistics = new SerialPerformanceStatistics();
@@ -79,10 +85,16 @@ public class FrameAccessor implements IFrameAccessor {
 			for (int j = 0; j < height; j++) {
 				try {
 					System.out.println("requesting frame " + i + " " + j);
+					long t1 = System.currentTimeMillis()
 					Block block = serviceClient.getBlock(currentStream.getName(), frame,i,j);
+					long t2 = System.currentTimeMillis();
+					latency.add(t2-t1);
+					blockCount++;
+					
 				} catch (SocketTimeoutException e) {
 					System.out.println("socket timeout");
-					j--;
+					blockDropped++;
+					
 				}
 				
 			}
