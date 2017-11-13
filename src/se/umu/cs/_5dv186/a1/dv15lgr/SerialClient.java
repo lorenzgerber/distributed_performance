@@ -30,9 +30,9 @@ public final class SerialClient {
 	public static void main(String args[]) {
 		
 		final String host = "harry.cs.umu.se";
-		final int timeout = 250;
-		final String username = "test1";
-		final String stream = "stream1";
+		final int timeout = 500;
+		final String username = "dv15lgr";
+		final String stream = "stream7";
 		
 		try{
 		StreamServiceClient client = DefaultStreamServiceClient.bind(host,timeout,username);

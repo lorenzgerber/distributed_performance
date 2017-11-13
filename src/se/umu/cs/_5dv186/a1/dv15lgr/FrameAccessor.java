@@ -106,10 +106,11 @@ public class FrameAccessor implements IFrameAccessor {
 		Frame currentFrame = new SerialFrame(frame);	
 		int width = currentStream.getWidthInBlocks();
 		int height = currentStream.getHeightInBlocks();
+		System.out.println("Frame: " + frame);
 		for(int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				try {
-					System.out.println("requesting frame " + frame + " block " + i + " " + j);
+					//System.out.println("requesting frame " + frame + " block " + i + " " + j);
 					long t1 = System.currentTimeMillis();
 					Block block = serviceClient.getBlock(currentStream.getName(), frame,i,j);
 					long t2 = System.currentTimeMillis();
