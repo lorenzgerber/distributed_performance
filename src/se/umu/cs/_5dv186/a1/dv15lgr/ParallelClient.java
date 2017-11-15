@@ -1,7 +1,6 @@
 package se.umu.cs._5dv186.a1.dv15lgr;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.DefaultStreamServiceClient;
@@ -32,16 +31,17 @@ public class ParallelClient {
 		final String host2 = "dobby.cs.umu.se";
 		final String host3 = "draco.cs.umu.se";
 		
-		final int timeout = 500;
-		final String username = "test1";
+		final int timeout = 100;
+		final String username = "dv15lgr";
 		final String stream = "stream7";
 		
 		try{
+			
 			StreamServiceClient clients[] = new StreamServiceClient[4];
 			clients[0] = DefaultStreamServiceClient.bind(host0,timeout,username);
-			clients[1] = DefaultStreamServiceClient.bind(host0,timeout,username);
-			clients[2] = DefaultStreamServiceClient.bind(host0,timeout,username);
-			clients[3] = DefaultStreamServiceClient.bind(host0,timeout,username);
+			clients[1] = DefaultStreamServiceClient.bind(host1,timeout,username);
+			clients[2] = DefaultStreamServiceClient.bind(host2,timeout,username);
+			clients[3] = DefaultStreamServiceClient.bind(host3,timeout,username);
 		
 		
 			listStreamInfo(clients[0]);
@@ -53,16 +53,22 @@ public class ParallelClient {
 			StreamInfo test = frameAccessor.getStreamInfo();
 			int numberOfFrames = test.getLengthInFrames();
 			
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < numberOfFrames; i++) {
 				Frame frame = frameAccessor.getFrame(i);
 			}
 			
 			frameAccessor.shutdownThreadPool();
-		
-			frameAccessor.getPerformanceStatistics();
 			System.out.println("Finished Stream");
 			
-			PerformanceStatistics perform = frameAccessor.getPerformanceStatistics();
+			PerformanceStatistics stats = frameAccessor.getPerformanceStatistics();
+			System.out.println("frames per second: " + stats.getFrameThroughput());
+			for(StreamServiceClient client:clients) {
+				System.out.println("Droprate " + client.getHost() + " "+ stats.getPacketDropRate(client.getHost()) + "%");
+				System.out.println("Latency " + client.getHost() + " "+ stats.getPacketLatency(client.getHost()) + "ms");
+				
+			} 
+			
+			
 			
 			} catch (Exception e) {
 				e.printStackTrace();		
