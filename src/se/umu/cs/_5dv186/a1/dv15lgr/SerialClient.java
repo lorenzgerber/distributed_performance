@@ -63,6 +63,11 @@ public class SerialClient {
 				System.out.println("Droprate " + client.getHost() + " "+ stats.getPacketDropRate(client.getHost()) + "%");
 				System.out.println("Latency " + client.getHost() + " "+ stats.getPacketLatency(client.getHost()) + "ms");
 				
+				for(Long latency : stats.getRawLatency(client.getHost())) {
+					System.out.println(latency);
+				}
+				
+				
 			} 
 			
 			
