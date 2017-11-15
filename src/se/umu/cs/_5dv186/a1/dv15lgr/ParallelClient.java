@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.DefaultStreamServiceClient;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
-import se.umu.cs._5dv186.a1.dv15lgr.SerialFrameAccessor.PerformanceStatistics;
+import se.umu.cs._5dv186.a1.dv15lgr.ParallelFrameAccessor.Frame;
+import se.umu.cs._5dv186.a1.dv15lgr.ParallelFrameAccessor.PerformanceStatistics;
+
 
 public class ParallelClient {
 
@@ -51,18 +53,22 @@ public class ParallelClient {
 			StreamInfo test = frameAccessor.getStreamInfo();
 			int numberOfFrames = test.getLengthInFrames();
 			
-			for (int i = 0; i < numberOfFrames; i++) {
-				
-				//System.out.println("We are here " + i);
-				frameAccessor.getFrame(i);
-							
+			for (int i = 0; i < 10; i++) {
+				Frame frame = frameAccessor.getFrame(i);
 			}
 			
-			//PerformanceStatistics perform = frameAccessor.getPerformanceStatistics();
+			frameAccessor.shutdownThreadPool();
+		
+			frameAccessor.getPerformanceStatistics();
+			System.out.println("Finished Stream");
+			
+			PerformanceStatistics perform = frameAccessor.getPerformanceStatistics();
 			
 			} catch (Exception e) {
 				e.printStackTrace();		
 			}
+		
+		System.out.println("-----------------------------------------------------------------------------------------------------vi är typ klart");
 		
 	}
 
