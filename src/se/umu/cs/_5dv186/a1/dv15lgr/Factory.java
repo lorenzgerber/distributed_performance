@@ -7,13 +7,15 @@ public class Factory implements IFactory {
 	
 
 	@Override
-	public SerialFrameAccessor getFrameAccessor(StreamServiceClient client, String streamName) {
-		SerialFrameAccessor accessor = null;
+	public FrameAccessor getFrameAccessor(StreamServiceClient client, String streamName) {
+		FrameAccessor accessor = null;
+		StreamServiceClient clients[] = new StreamServiceClient[1];
+		clients[0] = client;
 		try {
 			StreamInfo[] streams = client.listStreams();
 			for(StreamInfo stream : streams) {
 				if(stream.getName().equals(streamName)) {
-					accessor = new SerialFrameAccessor(client, stream);
+					accessor = new FrameAccessor(clients, stream);
 				}
 			}
 		} catch (Exception e) {
@@ -23,13 +25,13 @@ public class Factory implements IFactory {
 	}
 
 	@Override
-	public ParallelFrameAccessor getFrameAccessor(StreamServiceClient[] clients, String streamName) {
-		ParallelFrameAccessor accessor = null;
+	public FrameAccessor getFrameAccessor(StreamServiceClient[] clients, String streamName) {
+		FrameAccessor accessor = null;
 		try {
 			StreamInfo[] streams = clients[0].listStreams();
 			for(StreamInfo stream : streams) {
 				if(stream.getName().equals(streamName)) {
-					accessor = new ParallelFrameAccessor(clients, stream);
+					accessor = new FrameAccessor(clients, stream);
 				}
 			}
 		} catch (Exception e) {

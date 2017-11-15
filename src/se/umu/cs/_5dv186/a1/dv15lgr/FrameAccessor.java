@@ -15,19 +15,22 @@ import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
 
 
-public class ParallelFrameAccessor implements IFrameAccessor {
+public class FrameAccessor implements IFrameAccessor {
 	private StreamServiceClient[] serviceClients;
 	private StreamInfo currentStream;
 	private long start;
 	private long stop;
 	private int frames = 0;
-	private ExecutorService pool = Executors.newFixedThreadPool(4);
+	private ExecutorService pool;
+	private int numberOfServices;
 	ArrayList<Long> latency = new ArrayList<>();
 	HashMap<String, ConnectionPerformanceContainer> performanceContainers = new HashMap<>();
 		
- 	public ParallelFrameAccessor(StreamServiceClient[] clients, StreamInfo stream) {
+ 	public FrameAccessor(StreamServiceClient[] clients, StreamInfo stream) {
 		serviceClients = clients;
+		numberOfServices = clients.length;
 		currentStream = stream;
+		pool = Executors.newFixedThreadPool(numberOfServices);
 		for(StreamServiceClient client:clients) {
 			performanceContainers.put(client.getHost(), new ConnectionPerformanceContainer());
 		}
@@ -127,13 +130,33 @@ public class ParallelFrameAccessor implements IFrameAccessor {
 
 		@Override
 		public double getBandwidthUtilization() {
-			// TODO Auto-generated method stub
-			return 0;
+			int totalBlocks = 0;
+			int totalBits = 0;
+			int requestedBlocks = 0;
+			int droppedBlocks = 0;
+			double elapsedTimeSec;
+			
+			for (StreamServiceClient client: serviceClients) {
+				requestedBlocks += performanceContainers.get(client.getHost()).cBlockCount;
+				droppedBlocks += performanceContainers.get(client.getHost()).cDropCount;
+			}
+			
+			totalBlocks = requestedBlocks-droppedBlocks;
+			
+			System.out.println("req, drop, total: " + requestedBlocks + ", " + droppedBlocks + ", " + totalBlocks);
+			totalBits = totalBlocks * 6144;
+			elapsedTimeSec = (double) Math.round((pStop - pStart)/10)/100;
+			double result = (double) Math.round(totalBits / elapsedTimeSec*100)/100;
+			
+			return result;
+		}
+		
+		public ArrayList<Long> getRawLatency(String host){
+			ConnectionPerformanceContainer current = conPerform.get(host);
+			return current.cLatency;
 		}
 		
 	}
-
-
 
 	@Override
 	public Frame getFrame(int frame) throws IOException, SocketTimeoutException {
@@ -149,15 +172,14 @@ public class ParallelFrameAccessor implements IFrameAccessor {
 			        currentPoolSize = ((ThreadPoolExecutor) pool).getActiveCount();
 				}
 				
-				while(currentPoolSize >=4) {
+				while(currentPoolSize >= numberOfServices) {
 					if (pool instanceof ThreadPoolExecutor) {
 				        currentPoolSize = ((ThreadPoolExecutor) pool).getActiveCount();
 					}
 				}
-				pool.execute(new GetBlockRunnable(serviceClients[i%4],performanceContainers.get(serviceClients[i%4].getHost()), currentStream, currentFrame, i, j));				
+				pool.execute(new GetBlockRunnable(serviceClients[j%numberOfServices],performanceContainers.get(serviceClients[j%numberOfServices].getHost()), currentStream, currentFrame, i, j));				
 			}
 		}
-		System.out.print(frame + " ");
 		frames++;
 		return currentFrame;
 	}

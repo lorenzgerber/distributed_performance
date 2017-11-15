@@ -5,8 +5,8 @@ import java.io.IOException;
 import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.DefaultStreamServiceClient;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
-import se.umu.cs._5dv186.a1.dv15lgr.ParallelFrameAccessor.Frame;
-import se.umu.cs._5dv186.a1.dv15lgr.ParallelFrameAccessor.PerformanceStatistics;
+import se.umu.cs._5dv186.a1.dv15lgr.FrameAccessor.Frame;
+import se.umu.cs._5dv186.a1.dv15lgr.FrameAccessor.PerformanceStatistics;
 
 
 public class ParallelClient {
@@ -31,7 +31,7 @@ public class ParallelClient {
 		final String host2 = "dobby.cs.umu.se";
 		final String host3 = "draco.cs.umu.se";
 		
-		final int timeout = 100;
+		final int timeout = 1000;
 		final String username = "dv15lgr";
 		final String stream = "stream7";
 		
@@ -47,13 +47,13 @@ public class ParallelClient {
 			listStreamInfo(clients[0]);
 
 			Factory factory = new Factory();
-			ParallelFrameAccessor frameAccessor = factory.getFrameAccessor(clients, stream);
+			FrameAccessor frameAccessor = factory.getFrameAccessor(clients, stream);
 			
 			//  used to determine how many times to iterate
 			StreamInfo test = frameAccessor.getStreamInfo();
 			int numberOfFrames = test.getLengthInFrames();
 			
-			for (int i = 0; i < numberOfFrames; i++) {
+			for (int i = 0; i < 10; i++) {
 				Frame frame = frameAccessor.getFrame(i);
 			}
 			
@@ -62,9 +62,14 @@ public class ParallelClient {
 			
 			PerformanceStatistics stats = frameAccessor.getPerformanceStatistics();
 			System.out.println("frames per second: " + stats.getFrameThroughput());
+			System.out.println("Bits per second: " + stats.getBandwidthUtilization());
 			for(StreamServiceClient client:clients) {
 				System.out.println("Droprate " + client.getHost() + " "+ stats.getPacketDropRate(client.getHost()) + "%");
 				System.out.println("Latency " + client.getHost() + " "+ stats.getPacketLatency(client.getHost()) + "ms");
+			
+				for(Long latency : stats.getRawLatency(client.getHost())) {
+					System.out.println(latency);
+				}
 				
 			} 
 			

@@ -5,15 +5,12 @@ import java.io.IOException;
 import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.DefaultStreamServiceClient;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
-import se.umu.cs._5dv186.a1.dv15lgr.SerialFrameAccessor.PerformanceStatistics;
+import se.umu.cs._5dv186.a1.dv15lgr.FrameAccessor.Frame;
+import se.umu.cs._5dv186.a1.dv15lgr.FrameAccessor.PerformanceStatistics;
 
 
+public class SerialClient {
 
-
-
-
-public final class SerialClient {
-	
 	int FrameThroughput;
 	int BandwithUtilization;
 	
@@ -29,36 +26,53 @@ public final class SerialClient {
 	
 	public static void main(String args[]) {
 		
-		final String host = "harry.cs.umu.se";
+		final String host0 = "harry.cs.umu.se";
+		final String host1 = "bellatrix.cs.umu.se";
+		final String host2 = "dobby.cs.umu.se";
+		final String host3 = "draco.cs.umu.se";
+		
 		final int timeout = 500;
 		final String username = "dv15lgr";
 		final String stream = "stream7";
 		
 		try{
-		StreamServiceClient client = DefaultStreamServiceClient.bind(host,timeout,username);
-		
-		listStreamInfo(client);
-
-		Factory factory = new Factory();
-		SerialFrameAccessor frameAccessor = factory.getFrameAccessor(client, stream);
-		
-		//  used to determine how many times to iterate
-		StreamInfo test = frameAccessor.getStreamInfo();
-		int numberOfFrames = test.getLengthInFrames();
-		
-		for (int i = 0; i < numberOfFrames; i++) {
 			
-			//System.out.println("We are here " + i);
-			frameAccessor.getFrame(i);
-						
-		}
+			StreamServiceClient clients[] = new StreamServiceClient[1];
+			clients[0] = DefaultStreamServiceClient.bind(host3,timeout,username);
+			
+			listStreamInfo(clients[0]);
+
+			Factory factory = new Factory();
+			FrameAccessor frameAccessor = factory.getFrameAccessor(clients, stream);
+			
+			//  used to determine how many times to iterate
+			StreamInfo test = frameAccessor.getStreamInfo();
+			int numberOfFrames = test.getLengthInFrames();
+			
+			for (int i = 0; i < 2; i++) {
+				Frame frame = frameAccessor.getFrame(i);
+			}
+			
+			frameAccessor.shutdownThreadPool();
+			System.out.println("Finished Stream");
+			
+			PerformanceStatistics stats = frameAccessor.getPerformanceStatistics();
+			System.out.println("frames per second: " + stats.getFrameThroughput());
+			System.out.println("Bits per second: " + stats.getBandwidthUtilization());
+			for(StreamServiceClient client:clients) {
+				System.out.println("Droprate " + client.getHost() + " "+ stats.getPacketDropRate(client.getHost()) + "%");
+				System.out.println("Latency " + client.getHost() + " "+ stats.getPacketLatency(client.getHost()) + "ms");
+				
+			} 
+			
+			
+			
+			} catch (Exception e) {
+				e.printStackTrace();		
+			}
 		
-		PerformanceStatistics perform = frameAccessor.getPerformanceStatistics();
-		System.out.println("average latency: " + perform.getPacketLatency(client.getHost()));
-		
-		} catch (Exception e) {
-			e.printStackTrace();		
-		}
+		System.out.println("-----------------------------------------------------------------------------------------------------vi är typ klart");
 		
 	}
+
 }
