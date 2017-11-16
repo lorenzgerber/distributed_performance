@@ -8,12 +8,10 @@ import se.umu.cs._5dv186.a1.client.StreamServiceClient;
 import se.umu.cs._5dv186.a1.dv15lgr.FrameAccessor.Frame;
 import se.umu.cs._5dv186.a1.dv15lgr.FrameAccessor.PerformanceStatistics;
 
-
-public class SerialClient {
-
-	int FrameThroughput;
-	int BandwithUtilization;
+public class Client {
 	
+	static int NUMBER_OF_FRAMES = 10;
+
 	public static void listStreamInfo (StreamServiceClient client) throws IOException {
 		StreamInfo[] streams = client.listStreams();
 		System.out.println("found " + streams.length + " streams");
@@ -23,33 +21,40 @@ public class SerialClient {
 		}  
 	}
 	
-	
 	public static void main(String args[]) {
 		
-		final String host0 = "harry.cs.umu.se";
-		final String host1 = "bellatrix.cs.umu.se";
-		final String host2 = "dobby.cs.umu.se";
-		final String host3 = "draco.cs.umu.se";
-		
-		final int timeout = 500;
-		final String username = "dv15lgr";
-		final String stream = "stream7";
+		int timeout;
+		String username = "dv15lgr";
+		String stream = "stream7";
 		
 		try{
 			
-			StreamServiceClient clients[] = new StreamServiceClient[1];
-			clients[0] = DefaultStreamServiceClient.bind(host3,timeout,username);
+			StreamServiceClient clients[] = new StreamServiceClient[args.length-2];
 			
-			listStreamInfo(clients[0]);
+			if(args.length < 3) {
+				System.out.println("args: timeout user host_1 [host_n]");
+			}
+			
+			timeout = Integer.parseInt(args[0]);
+			username = args[1];
+			
+			int clientCounter = 0;
+			for(int i = 2; i < args.length; i++) {
+				clients[clientCounter] = DefaultStreamServiceClient.bind(args[i],timeout, username);
+				clientCounter++;
+			}
+			
+			//listStreamInfo(clients[0]);
 
 			Factory factory = new Factory();
 			FrameAccessor frameAccessor = factory.getFrameAccessor(clients, stream);
 			
-			//  used to determine how many times to iterate
+			// used to determine how many times to iterate
+			// currently not used as stream services are too slow
 			StreamInfo test = frameAccessor.getStreamInfo();
 			int numberOfFrames = test.getLengthInFrames();
 			
-			for (int i = 0; i < 2; i++) {
+			for (int i = 0; i < NUMBER_OF_FRAMES; i++) {
 				Frame frame = frameAccessor.getFrame(i);
 			}
 			
@@ -66,18 +71,10 @@ public class SerialClient {
 				for(Long latency : stats.getRawLatency(client.getHost())) {
 					System.out.println(latency);
 				}
-				
-				
-			} 
+			} 		
 			
-			
-			
-			} catch (Exception e) {
-				e.printStackTrace();		
-			}
-		
-		System.out.println("-----------------------------------------------------------------------------------------------------vi är typ klart");
-		
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}		
 	}
-
 }

@@ -15,7 +15,11 @@ import ki.types.ds.StreamInfo;
 import se.umu.cs._5dv186.a1.client.StreamServiceClient;
 
 
+
 public class FrameAccessor implements IFrameAccessor {
+	
+	static final int BITS_PER_BLOCK = 6144;
+	
 	private StreamServiceClient[] serviceClients;
 	private StreamInfo currentStream;
 	private long start;
@@ -101,7 +105,7 @@ public class FrameAccessor implements IFrameAccessor {
 		@Override
 		public double getPacketDropRate(String host) {
 			ConnectionPerformanceContainer current = conPerform.get(host);
-			System.out.println(current.cBlockCount + " " + current.cDropCount);
+			//System.out.println(current.cBlockCount + " " + current.cDropCount);
 			double dropRate = (double) Math.round(100.0/current.cBlockCount*current.cDropCount*100)/100;
 			return dropRate;
 		}
@@ -122,9 +126,9 @@ public class FrameAccessor implements IFrameAccessor {
 		@Override
 		public double getFrameThroughput() {
 			double elapsedTimeSec = (double) Math.round((pStop - pStart)/10)/100;
-			System.out.println("elapsed time " + elapsedTimeSec);
-			System.out.println("total frames " + pFrames);
-			double result = (double) Math.round(frames / elapsedTimeSec*100)/100;
+			//System.out.println("elapsed time " + elapsedTimeSec);
+			//System.out.println("total frames " + pFrames);
+			double result = (double) Math.round(pFrames / elapsedTimeSec*100)/100;
 			return result;
 		}
 
@@ -143,8 +147,8 @@ public class FrameAccessor implements IFrameAccessor {
 			
 			totalBlocks = requestedBlocks-droppedBlocks;
 			
-			System.out.println("req, drop, total: " + requestedBlocks + ", " + droppedBlocks + ", " + totalBlocks);
-			totalBits = totalBlocks * 6144;
+			//System.out.println("req, drop, total: " + requestedBlocks + ", " + droppedBlocks + ", " + totalBlocks);
+			totalBits = totalBlocks * BITS_PER_BLOCK;
 			elapsedTimeSec = (double) Math.round((pStop - pStart)/10)/100;
 			double result = (double) Math.round(totalBits / elapsedTimeSec*100)/100;
 			
@@ -237,9 +241,9 @@ public class FrameAccessor implements IFrameAccessor {
 				Block block = rClient.getBlock(rStream.getName(), rFrame.getFrameId(),rBlockX,rBlockY);
 				long t2 = System.currentTimeMillis();	
 				rPerformance.addLatency(t2-t1);
-				System.out.println("(" + rFrame.getFrameId() + ", " + rBlockX + ", " + rBlockY + ")");
+				//System.out.println("(" + rFrame.getFrameId() + ", " + rBlockX + ", " + rBlockY + ")");
 			} catch (SocketTimeoutException e) {
-				System.out.println("timeout");
+				//System.out.println("timeout");
 				rPerformance.incDropCount();
 			} catch (IOException e) {
 				e.printStackTrace();
