@@ -126,8 +126,8 @@ public class FrameAccessor implements IFrameAccessor {
 		@Override
 		public double getFrameThroughput() {
 			double elapsedTimeSec = (double) Math.round((pStop - pStart)/10)/100;
-			//System.out.println("elapsed time " + elapsedTimeSec);
-			//System.out.println("total frames " + pFrames);
+			System.out.println("elapsed time " + elapsedTimeSec);
+			System.out.println("total frames " + pFrames);
 			double result = (double) Math.round(pFrames / elapsedTimeSec*100)/100;
 			return result;
 		}
@@ -147,7 +147,7 @@ public class FrameAccessor implements IFrameAccessor {
 			
 			totalBlocks = requestedBlocks-droppedBlocks;
 			
-			//System.out.println("req, drop, total: " + requestedBlocks + ", " + droppedBlocks + ", " + totalBlocks);
+			System.out.println("req, drop, total: " + requestedBlocks + ", " + droppedBlocks + ", " + totalBlocks);
 			totalBits = totalBlocks * BITS_PER_BLOCK;
 			elapsedTimeSec = (double) Math.round((pStop - pStart)/10)/100;
 			double result = (double) Math.round(totalBits / elapsedTimeSec*100)/100;
